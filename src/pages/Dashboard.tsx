@@ -5,7 +5,7 @@ export default function Dashboard(){
     <section className="grid grid-2">
       <div className="card">
         <h2 style={{fontSize:18, fontWeight:700, marginBottom:8}}>Benvenuto</h2>
-        <p className="muted">Riepilogo rapido: fase corrente, target macro, allenamento del giorno e progresso misure (coming soon grafici).</p>
+        <p className="muted">Riepilogo rapido: fase corrente, target macro, allenamento del giorno e progresso misure.</p>
       </div>
       <div className="card">
         <h2 style={{fontSize:18, fontWeight:700, marginBottom:8}}>Azioni rapide</h2>
