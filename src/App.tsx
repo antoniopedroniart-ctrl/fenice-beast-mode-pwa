@@ -5,6 +5,7 @@ import Nutrition from './pages/Nutrition';
 import Training from './pages/Training';
 import Body from './pages/Body';
 import Calendar from './pages/Calendar';
+import StudyPlanner from './pages/StudyPlanner';
 
 function useTheme() {
   const [theme, setTheme] = useState<'light'|'dark'|'auto'>(()=>{
@@ -30,6 +31,7 @@ function TopNav(){
           <NavLink to="/training" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Allenamento</NavLink>
           <NavLink to="/body" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Misure</NavLink>
           <NavLink to="/calendar" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Calendario</NavLink>
+          <NavLink to="/study" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Study Planner</NavLink>
         </nav>
       </div>
     </header>
@@ -56,6 +58,7 @@ export default function App(){
           <Route path="/training" element={<Training/>} />
           <Route path="/body" element={<Body/>} />
           <Route path="/calendar" element={<Calendar/>} />
+          <Route path="/study" element={<StudyPlanner/>} />
         </Routes>
       </main>
     </div>
