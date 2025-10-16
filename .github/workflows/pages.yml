@@ -21,13 +21,13 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      # Usa npm install (non npm ci) così non serve package-lock.json
+      # 👉 Usa install normale invece di ci
       - run: npm install --no-audit --no-fund
 
-      # (opzionale) se vuoi forzare la base in build:
-      # - run: npm run build -- --base=/fenice-beast-mode-pwa/
+      # Costruisci la PWA
       - run: npm run build
 
+      # Carica gli artifact per Pages
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
