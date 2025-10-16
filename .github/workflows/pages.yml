@@ -19,15 +19,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          # ⚠️ niente "cache: 'npm'" qui
 
-      # 👉 Usa install normale invece di ci
+      # Usa install (non "ci") perché non abbiamo lockfile
       - run: npm install --no-audit --no-fund
 
-      # Costruisci la PWA
       - run: npm run build
 
-      # Carica gli artifact per Pages
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
