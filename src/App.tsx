@@ -112,7 +112,7 @@ export default function App(){
   const { theme, setTheme } = useTheme();
   return (
     <div>
-      <TopNav />
+      <TopNav theme={theme} setTheme={setTheme} />
       <main className="wrap" style={{display:'grid', gap:16}}>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
           <span className="muted">Tema</span>
