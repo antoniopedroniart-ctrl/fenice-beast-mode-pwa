@@ -1,49 +1,74 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+function useInterval(cb:()=>void, delay:number|null){
+  const saved = useRef(cb); useEffect(()=>{saved.current=cb;},[cb]);
+  useEffect(()=>{ if(delay===null) return; const id=setInterval(()=>saved.current(), delay); return ()=>clearInterval(id); },[delay]);
+}
+
 export default function WorkoutTimer(){
-  const [work, setWork] = useState(45);
-  const [rest, setRest] = useState(90);
-  const [rounds, setRounds] = useState(6);
-  const [phase, setPhase] = useState<'work'|'rest'|'idle'>('idle');
-  const [left, setLeft] = useState(0);
-  const [round, setRound] = useState(0);
-  const ref = useRef<number|undefined>(undefined);
+  const [mode,setMode]=useState<'REST'|'EMOM'|'AMRAP'>('REST');
+  const [rest,setRest]=useState(90); // sec
+  const [emomMin,setEmomMin]=useState(10); const [emomTick,setEmomTick]=useState(0);
+  const [amrapMin,setAmrapMin]=useState(10); const [amrapLeft,setAmrapLeft]=useState(amrapMin*60);
+  const [running,setRunning]=useState(false);
 
-  const start = ()=>{ setPhase('work'); setRound(1); setLeft(work); };
-  const stop = ()=>{ setPhase('idle'); setLeft(0); setRound(0); if(ref.current) clearInterval(ref.current); };
+  useInterval(()=>{
+    if(!running) return;
+    if(mode==='REST') { if(rest>0) setRest(s=>s-1); }
+    if(mode==='EMOM') { setEmomTick(s=>s+1); }
+    if(mode==='AMRAP'){ setAmrapLeft(s=>Math.max(0,s-1)); }
+  }, 1000);
 
-  useEffect(()=>{
-    if(phase==='idle') return;
-    ref.current = window.setInterval(()=>{
-      setLeft((s)=>{
-        if(s>1) return s-1;
-        if(phase==='work'){ setPhase('rest'); return rest; }
-        if(round>=rounds){ stop(); return 0; }
-        setPhase('work'); setRound(r=>r+1); return work;
-      });
-    },1000);
-    return ()=>{ if(ref.current) clearInterval(ref.current); };
-  },[phase, work, rest, rounds, round]);
+  useEffect(()=>{ setAmrapLeft(amrapMin*60); },[amrapMin]);
+
+  const fmt=(s:number)=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
 
   return (
-    <div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:8}}>
-        <label className="input" style={{display:'flex',alignItems:'center',gap:6}}>Work (s)
-          <input className="input" type="number" value={work} onChange={e=>setWork(Number(e.target.value))} style={{width:90}}/>
-        </label>
-        <label className="input" style={{display:'flex',alignItems:'center',gap:6}}>Rest (s)
-          <input className="input" type="number" value={rest} onChange={e=>setRest(Number(e.target.value))} style={{width:90}}/>
-        </label>
-        <label className="input" style={{display:'flex',alignItems:'center',gap:6}}>Rounds
-          <input className="input" type="number" value={rounds} onChange={e=>setRounds(Number(e.target.value))} style={{width:90}}/>
-        </label>
+    <div style={{display:'grid', gap:12}}>
+      <div style={{display:'flex', gap:8, flexWrap:'wrap'}}>
+        {(['REST','EMOM','AMRAP'] as const).map(m=>
+          <button key={m} className={`btn ${mode===m?'primary':''}`} onClick={()=>{setMode(m); setRunning(false);}}>{m}</button>
+        )}
       </div>
-      <div style={{marginTop:8, display:'flex', gap:8}}>
-        {phase==='idle' ? <button className="btn primary" onClick={start}>Start</button> : <button className="btn" onClick={stop}>Stop</button>}
-      </div>
-      <div style={{marginTop:8, fontSize:22, fontWeight:800}}>
-        {phase==='idle' ? 'Pronto' : `${phase==='work'?'WORK':'REST'} · ${left}s · Round ${round}/${rounds}`}
-      </div>
+
+      {mode==='REST' && (
+        <div className="card">
+          <div className="muted">Rest timer (sec)</div>
+          <input className="input" type="number" value={rest} onChange={e=>setRest(Math.max(0,Number(e.target.value||0)))} />
+          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>{fmt(rest)}</div>
+          <div style={{display:'flex',gap:8,marginTop:8}}>
+            <button className="btn primary" onClick={()=>setRunning(true)}>Start</button>
+            <button className="btn" onClick={()=>setRunning(false)}>Stop</button>
+            <button className="btn ghost" onClick={()=>setRest(90)}>Reset</button>
+          </div>
+        </div>
+      )}
+
+      {mode==='EMOM' && (
+        <div className="card">
+          <div className="muted">EMOM minuti</div>
+          <input className="input" type="number" value={emomMin} onChange={e=>setEmomMin(Math.max(1,Number(e.target.value||1)))} />
+          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>Tick: {emomTick} / {emomMin*60}</div>
+          <div className="muted">Esegui il set ogni volta che i secondi tornano a 00.</div>
+          <div style={{display:'flex',gap:8,marginTop:8}}>
+            <button className="btn primary" onClick={()=>setRunning(true)}>Start</button>
+            <button className="btn" onClick={()=>{setRunning(false); setEmomTick(0);}}>Stop</button>
+          </div>
+        </div>
+      )}
+
+      {mode==='AMRAP' && (
+        <div className="card">
+          <div className="muted">AMRAP minuti</div>
+          <input className="input" type="number" value={amrapMin} onChange={e=>setAmrapMin(Math.max(1,Number(e.target.value||1)))} />
+          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>{fmt(amrapLeft)}</div>
+          <div style={{display:'flex',gap:8,marginTop:8}}>
+            <button className="btn primary" onClick={()=>setRunning(true)}>Start</button>
+            <button className="btn" onClick={()=>setRunning(false)}>Pause</button>
+            <button className="btn ghost" onClick={()=>{setRunning(false); setAmrapLeft(amrapMin*60);}}>Reset</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
