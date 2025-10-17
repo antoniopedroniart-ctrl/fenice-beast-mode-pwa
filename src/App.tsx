@@ -9,15 +9,39 @@ import StudyPlanner from './pages/StudyPlanner';
 import Study from './pages/Study'; // <-- AGGIUNTO: logger studio
 
 function useTheme() {
-  const [theme, setTheme] = useState<'light'|'dark'|'auto'>(()=> {
-    try{ return (localStorage.getItem('fenice.theme') as any) || 'auto'; }catch{ return 'auto'; }
+  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>(() => {
+    try {
+      return (localStorage.getItem('fenice.theme') as any) || 'auto';
+    } catch {
+      return 'auto';
+    }
   });
-  useEffect(()=>{
-    const isDark = theme==='auto' ? (matchMedia('(prefers-color-scheme: dark)').matches) : theme==='dark';
-    document.documentElement.classList.toggle('dark', isDark);
-    document.body.classList.toggle('dark', isDark);
-    try{ localStorage.setItem('fenice.theme', theme); }catch{}
-  },[theme]);
+
+  // Applica il tema
+  useEffect(() => {
+    const apply = (t: 'light' | 'dark' | 'auto') => {
+      const isDark =
+        t === 'auto'
+          ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          : t === 'dark';
+      document.documentElement.classList.toggle('dark', isDark);
+      document.body.classList.toggle('dark', isDark);
+    };
+
+    apply(theme);
+    try {
+      localStorage.setItem('fenice.theme', theme);
+    } catch {}
+
+    // Aggiorna automaticamente se l’utente cambia preferenza OS
+    if (theme === 'auto') {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const handle = () => apply('auto');
+      mq.addEventListener('change', handle);
+      return () => mq.removeEventListener('change', handle);
+    }
+  }, [theme]);
+
   return { theme, setTheme };
 }
 
