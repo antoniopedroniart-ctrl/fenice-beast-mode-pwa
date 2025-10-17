@@ -57,12 +57,23 @@ function calcMacros(phase:Phase, weight:number, bf:number): Macros {
 }
 
 export default function NutritionPlanner(){
-  const sectionRef = useRef<HTMLDivElement|null>(null);
+ const sectionRef = useRef<HTMLDivElement|null>(null);
 
-  const defaults = { phase:'recomp' as Phase, plan:'base4' as Plan, meals:4, weight:80.35, bf:12.5 };
-  const settings = useMemo(()=> safeLoad<typeof defaults>(KEY) ?? defaults, []);
-  const macros   = useMemo(()=> calcMacros(settings.phase, settings.weight, settings.bf), [settings.phase, settings.weight, settings.bf]);
+const defaults = { phase:'recomp' as Phase, plan:'base4' as Plan, meals:4, weight:80.35, bf:12.5 };
+const settings = useMemo(() => {
+  try {
+    const raw = localStorage.getItem(KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed ?? defaults;
+  } catch {
+    return defaults;
+  }
+}, []);
 
+const macros = useMemo(
+  () => calcMacros(settings.phase as Phase, Number(settings.weight), Number(settings.bf)),
+  [settings.phase, settings.weight, settings.bf]
+);
   const split = useMemo(()=>{
     const plan = settings.plan as Plan;
     if (plan==='base4') return { labels:['Colazione','Pranzo','Snack','Cena'], shares:[0.25,0.35,0.15,0.25] };
