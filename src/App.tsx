@@ -10,30 +10,21 @@ import Study from './pages/Study'; // <-- AGGIUNTO: logger studio
 
 function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>(() => {
-    try {
-      return (localStorage.getItem('fenice.theme') as any) || 'auto';
-    } catch {
-      return 'auto';
-    }
+    try { return (localStorage.getItem('fenice.theme') as any) || 'auto'; } catch { return 'auto'; }
   });
 
-  // Applica il tema
   useEffect(() => {
-    const apply = (t: 'light' | 'dark' | 'auto') => {
-      const isDark =
-        t === 'auto'
-          ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          : t === 'dark';
+    const apply = (t: 'light'|'dark'|'auto') => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = t === 'auto' ? prefersDark : t === 'dark';
       document.documentElement.classList.toggle('dark', isDark);
       document.body.classList.toggle('dark', isDark);
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
     };
 
     apply(theme);
-    try {
-      localStorage.setItem('fenice.theme', theme);
-    } catch {}
+    try { localStorage.setItem('fenice.theme', theme); } catch {}
 
-    // Aggiorna automaticamente se l’utente cambia preferenza OS
     if (theme === 'auto') {
       const mq = window.matchMedia('(prefers-color-scheme: dark)');
       const handle = () => apply('auto');
@@ -44,6 +35,7 @@ function useTheme() {
 
   return { theme, setTheme };
 }
+
 
 function TopNav(){
   return (
