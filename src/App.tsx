@@ -6,9 +6,10 @@ import Training from './pages/Training';
 import Body from './pages/Body';
 import Calendar from './pages/Calendar';
 import StudyPlanner from './pages/StudyPlanner';
+import Study from './pages/Study'; // <-- AGGIUNTO: logger studio
 
 function useTheme() {
-  const [theme, setTheme] = useState<'light'|'dark'|'auto'>(()=>{
+  const [theme, setTheme] = useState<'light'|'dark'|'auto'>(()=> {
     try{ return (localStorage.getItem('fenice.theme') as any) || 'auto'; }catch{ return 'auto'; }
   });
   useEffect(()=>{
@@ -31,7 +32,8 @@ function TopNav(){
           <NavLink to="/training" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Allenamento</NavLink>
           <NavLink to="/body" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Misure</NavLink>
           <NavLink to="/calendar" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Calendario</NavLink>
-          <NavLink to="/study" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Study Planner</NavLink>
+          <NavLink to="/study" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Study (Logger)</NavLink>
+          <NavLink to="/study-planner" className={({isActive})=> isActive? 'btn primary' : 'btn'}>Study Planner</NavLink>
         </nav>
       </div>
     </header>
@@ -58,8 +60,9 @@ export default function App(){
           <Route path="/training" element={<Training/>} />
           <Route path="/body" element={<Body/>} />
           <Route path="/calendar" element={<Calendar/>} />
-          <Route path="/study" element={<StudyPlanner/>} />
-          <Route path="/study" element={<Study />} />
+          <Route path="/study" element={<Study />} /> {/* logger studio */}
+          <Route path="/study-planner" element={<StudyPlanner/>} /> {/* planner separato */}
+          <Route path="*" element={<Dashboard/>} />
         </Routes>
       </main>
     </div>
