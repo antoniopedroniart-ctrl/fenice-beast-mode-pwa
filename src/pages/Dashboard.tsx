@@ -1,3 +1,4 @@
+// src/pages/Dashboard.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,18 +16,16 @@ type Exam = {
 const EXAMS: Exam[] = [
   { title: 'Biochimica 1',          subjectKey: 'Biochimica 1',        date: '2025-12-10', targetHours: 60 },
   { title: 'Semeiotica Med/Chir',   subjectKey: 'Semeiotica Med/Chir', date: '2025-12-16', targetHours: 30 },
-  { title: 'Istologia',             subjectKey: 'Istologia',            date: '2026-01-07', targetHours: 70 },
-  { title: 'Anatomia',              subjectKey: 'Anatomia',             date: '2026-01-08', targetHours: 120 },
+  { title: 'Istologia',             subjectKey: 'Istologia',           date: '2026-01-07', targetHours: 70 },
+  { title: 'Anatomia',              subjectKey: 'Anatomia',            date: '2026-01-08', targetHours: 120 },
   { title: 'Biochimica 2',          subjectKey: 'Biochimica 2',        date: '2026-01-15', targetHours: 80 },
-  { title: 'Immunologia',           subjectKey: 'Immunologia',          date: '2026-01-28', targetHours: 70 },
+  { title: 'Immunologia',           subjectKey: 'Immunologia',         date: '2026-01-28', targetHours: 70 },
 ];
 
 function daysLeft(dIso:string){
   const x=new Date(dIso);
-  const t=new Date();
-  t.setHours(0,0,0,0);
-  const diffMs = x.getTime() - t.getTime();
-  return Math.ceil(diffMs/(1000*60*60*24));
+  const t=new Date(); t.setHours(0,0,0,0);
+  return Math.ceil((x.getTime()-t.getTime())/(1000*60*60*24));
 }
 function clamp01(x:number){ return Math.max(0, Math.min(1, x)); }
 
@@ -44,7 +43,6 @@ export default function Dashboard(){
   const [activity] = useState<LogEntry[]>(()=>{ try{ return JSON.parse(localStorage.getItem('fenice.activity')||'[]'); }catch{ return []; } });
   const [body] = useState<BodyEntry[]>(()=>{ try{ return JSON.parse(localStorage.getItem('fenice.logs')||'[]'); }catch{ return []; } });
 
-  // Latest body
   const latestBody = useMemo(()=> (body||[]).slice().sort((a,b)=>(a.date<b.date)?1:-1)[0], [body]);
 
   // KPI settimana
@@ -90,23 +88,23 @@ export default function Dashboard(){
 
   return (
     <section className="grid" style={{gap:16}}>
-      {/* ========== HERO Premium ========== */}
+      {/* ======= HERO Premium ======= */}
       <div className="card" style={{
-        padding: 20,
+        padding: 22,
         background: 'linear-gradient(135deg, color-mix(in oklab, var(--accent) 18%, var(--card)), var(--card))',
         borderColor: 'color-mix(in oklab, var(--accent) 20%, var(--border))',
         boxShadow: '0 16px 40px color-mix(in oklab, var(--accent) 22%, transparent)'
       }}>
-        <div style={{display:'grid', gridTemplateColumns:'1.2fr .8fr', gap:16}}>
-          {/* Colonna sinistra: headline + tasti rapidi */}
+        <div style={{display:'grid', gridTemplateColumns:'1.2fr .8fr', gap:18}}>
+          {/* Colonna sinistra: headline + CTA */}
           <div>
             <div style={{display:'inline-flex', alignItems:'center', gap:8, padding:'6px 10px',
               borderRadius:999, background:'color-mix(in oklab, var(--card) 70%, transparent)', border:'1px solid var(--border)'}}>
-              <span className="muted" style={{fontWeight:700, letterSpacing:.3}}>BEAST MODE</span>
+              <span className="muted" style={{fontWeight:800, letterSpacing:.3}}>BEAST MODE</span>
               <span>— build · learn · cut</span>
             </div>
             <h1 style={{margin:'10px 0 6px 0', fontSize:28, fontWeight:900, letterSpacing:.3}}>Pronto a dominare la giornata</h1>
-            <div className="muted" style={{marginBottom:12}}>
+            <div className="muted" style={{marginBottom:14}}>
               Allenamento, nutrizione e studio in un’unica plancia. Stat live, prossimi esami e accessi rapidi.
             </div>
             <div style={{display:'flex', gap:8, flexWrap:'wrap'}}>
@@ -129,9 +127,12 @@ export default function Dashboard(){
               </div>
               <div className="card" style={{textAlign:'center'}}>
                 <div className="muted">Peso / BF</div>
-                <div style={{fontSize:18, fontWeight:800}}>{latestBody? `${latestBody.weight_kg||'-'} kg · ${latestBody.bf||'-'}%`:'—'}</div>
+                <div style={{fontSize:18, fontWeight:800}}>
+                  {latestBody? `${latestBody.weight_kg||'-'} kg · ${latestBody.bf||'-'}%`:'—'}
+                </div>
               </div>
             </div>
+
             <div style={{marginTop:12}}>
               <div className="muted" style={{fontSize:12, marginBottom:6}}>Prossimi esami</div>
               <div style={{display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:10}}>
@@ -164,7 +165,7 @@ export default function Dashboard(){
         </div>
       </div>
 
-      {/* ========== KPI generali (resto pagina) ========== */}
+      {/* ======= Sezione esami completa ======= */}
       <div className="card">
         <h2 style={{fontSize:18,fontWeight:800,marginBottom:8}}>Panoramica studi per esame</h2>
         <div style={{display:'grid', gap:10}}>
@@ -195,6 +196,25 @@ export default function Dashboard(){
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* ======= KPI generali/quick tiles ======= */}
+      <div className="card">
+        <h2 style={{fontSize:18,fontWeight:800,marginBottom:8}}>Panoramica rapida</h2>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:12}}>
+          <div className="card" style={{textAlign:'center'}}>
+            <div className="muted">Allenamenti (sett.)</div>
+            <div style={{fontSize:28, fontWeight:900}}>{workoutsThisWeek}</div>
+          </div>
+          <div className="card" style={{textAlign:'center'}}>
+            <div className="muted">Ore studio (tot.)</div>
+            <div style={{fontSize:28, fontWeight:900}}>{totalHoursAll.toFixed(1)}</div>
+          </div>
+          <div className="card" style={{textAlign:'center'}}>
+            <div className="muted">Peso / BF</div>
+            <div style={{fontSize:20, fontWeight:800}}>{latestBody? `${latestBody.weight_kg||'-'} kg · ${latestBody.bf||'-'}%`:'—'}</div>
+          </div>
         </div>
       </div>
     </section>
