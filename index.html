@@ -2,6 +2,18 @@
 <!doctype html>
 <html lang="it">
   <head>
+    <script>
+  (function(){
+    try{
+      var saved = localStorage.getItem('fenice.theme') || 'auto';
+      var isDark = saved === 'auto'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : saved === 'dark';
+      if(isDark){ document.documentElement.classList.add('dark'); document.body.classList.add('dark'); }
+      else { document.documentElement.classList.remove('dark'); document.body.classList.remove('dark'); }
+    }catch(e){}
+  })();
+</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
