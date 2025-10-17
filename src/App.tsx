@@ -59,6 +59,7 @@ export default function App(){
           <Route path="/body" element={<Body/>} />
           <Route path="/calendar" element={<Calendar/>} />
           <Route path="/study" element={<StudyPlanner/>} />
+          <Route path="/study" element={<Study />} />
         </Routes>
       </main>
     </div>
