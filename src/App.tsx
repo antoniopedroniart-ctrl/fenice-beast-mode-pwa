@@ -114,14 +114,6 @@ export default function App(){
     <div>
       <TopNav theme={theme} setTheme={setTheme} />
       <main className="wrap" style={{display:'grid', gap:16}}>
-        <div style={{display:'flex', gap:8, alignItems:'center'}}>
-          <span className="muted">Tema</span>
-          <select className="input" value={theme} onChange={e=>setTheme(e.target.value as any)}>
-            <option value="auto">Auto</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </div>
         <Routes>
           <Route path="/" element={<Dashboard/>} />
           <Route path="/nutrition" element={<Nutrition/>} />
