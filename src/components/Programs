@@ -1,0 +1,45 @@
+import React from 'react';
+
+const BLOCK = (title:string, items:string[])=>(
+  <div className="card">
+    <h3 style={{fontWeight:800, marginBottom:6}}>{title}</h3>
+    <ul>{items.map((x,i)=>(<li key={i}>• {x}</li>))}</ul>
+  </div>
+);
+
+export default function Programs(){
+  return (
+    <div style={{display:'grid', gap:12}}>
+      {BLOCK('Push — varianti petto',[
+        'Panca piana / Smith / Manubri',
+        'Spinte inclinate / Hammer',
+        'Croci ai cavi / Peck deck',
+      ])}
+      {BLOCK('Push — spalle / tricipiti',[
+        'Military press / Arnold press',
+        'Alzate laterali cavo / manubri',
+        'French press / Pushdown / Estensioni cavo',
+      ])}
+      {BLOCK('Pull — schiena / bicipiti',[
+        'Stacco rumeno / Iperestensioni',
+        'Rematore bilanciere / Pulley / Chest supported row',
+        'Lat machine / Trazioni',
+        'Curl bilanciere / Curl manubri / Curl panca Scott'
+      ])}
+      {BLOCK('Legs — quad / ham / glutei / polpacci',[
+        'Squat / Front squat / Safety bar',
+        'Pressa / Hack squat / Affondi',
+        'Leg curl sdraiato / seduto',
+        'Calf raise seduto / in piedi'
+      ])}
+      {BLOCK('Chest & Back',[
+        'Panca inclinata / Croci ai cavi',
+        'Trazioni / Rematore manubrio'
+      ])}
+      {BLOCK('Shoulders & Arms',[
+        'Lento avanti / Alzate laterali',
+        'Curl alternato / Pushdown / Hammer curl'
+      ])}
+    </div>
+  );
+}
