@@ -1,19 +1,84 @@
-:root { color-scheme: light dark }
-* { box-sizing: border-box }
-body { margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#ffffff; color:#0f172a }
-body.dark, .dark body { background:#0b0b0b; color:#f8fafc }
-.wrap { max-width:1200px; margin:0 auto; padding:16px }
-.card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:16px }
-.dark .card { background:#111; border-color:#333 }
-.input { padding:.55rem .75rem; border:1px solid #e5e7eb; border-radius:.75rem; background:#fff; color:#0f172a }
-.dark .input { background:#121212; color:#e5e7eb; border-color:#333 }
-.btn { padding:.55rem .8rem; border-radius:12px; border:1px solid #e5e7eb; background:#fff; color:#0f172a; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:.4rem }
-.btn.primary { background:#0f172a; color:#fff; border-color:#0f172a }
-.dark .btn { background:#141414; border-color:#333; color:#e5e7eb }
-.table { width:100%; border-collapse:collapse }
-.table th,.table td { padding:.5rem; border-top:1px solid #e5e7eb }
-.dark .table th,.dark .table td { border-top:1px solid #222 }
-.muted { opacity:.72 }
-.grid { display:grid; gap:16px }
-.grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)) }
-@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr } }
+/* ====== Design tokens (light) ====== */
+:root {
+  --bg: #0b0b0b;            /* page background */
+  --text: #0f172a;          /* slate-900 */
+  --muted: #64748b;         /* slate-500 */
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --primary: #111827;       /* neutral-900 */
+  --primary-contrast: #ffffff;
+
+  --ring: rgba(0,0,0,.06);
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+}
+
+/* ====== Dark overrides ====== */
+.dark {
+  --bg: #0b0b0b;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --card: #111213;
+  --border: #23262a;
+  --primary: #111827;
+  --primary-contrast: #ffffff;
+
+  --ring: rgba(255,255,255,.06);
+  --shadow: 0 1px 2px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.35);
+}
+
+/* ====== Base ====== */
+html, body, #root { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+/* ====== Components ====== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+  outline: none;
+  color: var(--text);
+}
+.input:focus { box-shadow: 0 0 0 4px var(--ring); }
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(0.98); }
+.btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 8px 6px; border-top: 1px solid var(--border); }
+.table .muted { color: var(--muted); }
+
+.muted { color: var(--muted); }
+
+/* Layout utilities */
+.grid { display: grid; gap: 12px; }
+.grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+@media (max-width: 900px){ .grid-2 { grid-template-columns: 1fr; } }
